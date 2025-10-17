@@ -1,0 +1,463 @@
+* {
+  margin: 0;
+  padding: 1;
+  box-sizing: border-box;
+}
+
+body {
+  width: 400px;
+  min-height: 500px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #333;
+}
+
+#container {
+  background: white;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/*#region Header*/
+#header {
+  position: relative; /* thêm để nút bánh răng định vị trong header */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#header h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+/*#region Theme Color Picker*/
+
+#settings-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, background 0.3s;
+}
+
+#settings-btn:hover {
+  transform: rotate(45deg);
+  background: #f1f1f1;
+}
+
+/* 🎨 Menu đổi màu nền */
+#color-menu {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: rgba(230, 225, 255, 0.9);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 180px;
+  animation: fadeIn 0.25s ease;
+}
+
+#color-menu.active {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.color-option {
+  flex: 1 1 45%;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.color-option:hover {
+  background: #e8e8e8;
+  transform: translateY(-2px);
+}
+
+#settings-btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 20px;
+  margin-right: 5px;
+  transition: transform 0.3s ease;
+}
+
+#settings-btn:hover {
+  transform: rotate(45deg) scale(1.2);
+}
+
+/* Hiệu ứng mở menu */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* chữ */
+.color-option {
+  flex: 1 1 45%;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+
+  /* ✨ thêm dòng này */
+  color: #333; /* chữ xám đậm dễ đọc trên nền sáng */
+}
+/*#endregion*/
+
+/*#endregion*/
+
+/* #region URL*/
+
+#current_page {
+  background: #f8f9fa;
+  padding: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+#current_page label {
+  display: block;
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+#current_page #current_url {
+  font-size: 13px;
+  color: #495057;
+  word-break: break-all;
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+/* #endregion*/
+
+#note_informations {
+  padding: 20px;
+}
+
+/*#region Khung nhập liệu*/
+
+.input_group {
+  margin-bottom: 15px;
+}
+
+.input_group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.input_group input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.input_group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/*#endregion*/
+
+/*#region quill*/
+
+/* Toolbar container */
+.ql-toolbar.ql-snow {
+  background: #f8f9fa;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Toolbar button chung */
+.ql-toolbar button {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+/* Hover effect */
+.ql-toolbar button:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+/* Active button */
+.ql-toolbar button.ql-active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.6);
+}
+
+/* Pickers (dropdowns) */
+.ql-toolbar .ql-picker {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  margin-right: 4px;
+  transition: all 0.15s;
+}
+
+/* Hover picker */
+.ql-toolbar .ql-picker:hover {
+  border-color: #9ca3af;
+}
+
+/* Nút xoá định dạng (clean) */
+.ql-toolbar button.ql-clean::after {
+  font-size: 16px;
+  color: #ef4444;
+}
+
+/* Icon SVG */
+.ql-toolbar svg {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+/* Khoảng cách các nhóm toolbar */
+.ql-toolbar .ql-formats {
+  margin-right: 8px;
+}
+
+/* Editor container */
+.ql-container.ql-snow {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  min-height: 250px;
+  padding: 12px 14px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 15px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Placeholder text style */
+.ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Highlight selection */
+.ql-editor ::selection {
+  background: #bfdbfe;
+}
+
+/* Subtle shadow for editor focus */
+.ql-container.ql-snow:focus-within {
+  box-shadow: 0 0 0 2px #2563eb33;
+}
+
+/*#endregion*/
+
+#hint {
+  font-size: 11px;
+  color: #6c757d;
+  margin-top: 5px;
+  padding: 6px 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.btn_group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+/*#region save*/
+#btn_save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+#btn_save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/*#endregion*/
+
+/*#region delete*/
+
+#btn_delete {
+  background: #e9ecef;
+  color: #495057;
+}
+
+#btn_delete:hover {
+  background: #dee2e6;
+}
+
+/*#endregion*/
+
+/*#region page stat*/
+#page_stat {
+  padding: 0 20px 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#page_stat h3 {
+  font-size: 16px;
+  color: #495057;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/*#endregion*/
+
+.note-item {
+  background: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s;
+}
+
+.note-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.note-title {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.note-content {
+  color: #6c757d;
+  font-size: 13px;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/*#region Chỉ số extension*/
+#stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: #f8f9fa;
+  border-top: 2px solid #e9ecef;
+}
+
+.stats_item {
+  text-align: center;
+}
+
+.stat_number {
+  font-size: 24px;
+}
+
+.stat_label {
+  font-size: 11px;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+/*#endregion*/
+
+/*#region scrollbar*/
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5568d3;
+}
+
+/*#endregion*/

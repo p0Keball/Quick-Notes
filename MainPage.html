@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickNotes</title>
+
+    <link rel="stylesheet" href="MainPage.css" />
+    <link href="quill/quill.snow.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="header">
+        <div class="header_right">
+          <h1>📝 QuickNotes</h1>
+        </div>
+
+        <!-- ⚙️ Nút bánh răng + menu đổi màu -->
+        <div class="header-right">
+          <button id="settings-btn" title="Đổi màu nền">⚙️</button>
+          <!-- Menu đổi màu nền (đã thêm icon + nhiều màu hơn) -->
+          <div id="color-menu">
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+            >
+              🌞 <span>Mặc định</span>
+            </div>
+            <div class="color-option" data-color="#d9c3ff">
+              💜 <span>Tím</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #434343 0%, #000000 100%)"
+            >
+              🌙 <span>Dark Elegant</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)"
+            >
+              🌊 <span>Ocean</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
+            >
+              🍃 <span>Mint Fresh</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #F6E27F 0%, #E4A700 100%)"
+            >
+              🐝 <span>Honey bee</span>
+            </div>
+            <div class="color-option" data-color="#ff7f7f">
+              ❤️ <span>Đỏ nhạt</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)"
+            >
+              🧡 <span>Cam</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"
+            >
+              💧 <span>Xanh nhạt</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #E3C9A8 0%, #C89F7A 100%)"
+            >
+              ☕ <span>Caramel</span>
+            </div>
+            <div
+              class="color-option"
+              data-color="linear-gradient(135deg, #f9d423 0%, #a1c4fd 50%, #c2e9fb 100%)"
+            >
+              🌫️ <span>Bạc</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--#region URL-->
+
+      <div id="current_page">
+        <label>🌐 Trang web hiện tại:</label>
+        <div id="current_url">Đang tải...</div>
+      </div>
+
+      <!--#endregion-->
+
+      <div id="note_informations">
+        <!--#region Tiêu đề-->
+
+        <div class="input_group">
+          <label>📌 Tiêu đề ghi chú:</label>
+          <input type="text" id="note_Title" placeholder="Nhập tiêu đề" />
+        </div>
+
+        <!--#endregion-->
+
+        <div class="input_group">
+          <label>✍️ Nội dung:</label>
+
+          <!--#region Công cụ soạn thảo-->
+
+          <div class="editor_toolbar">
+            <span>
+              <select class="ql-header">
+                <option selected></option>
+                <option value="1">H1</option>
+                <option value="2">H2</option>
+              </select>
+            </span>
+
+            <span>|</span>
+
+            <span>
+              <button class="ql-bold" title="Bold (Ctrl + B)"></button>
+
+              <button class="ql-italic" title="Italic (Ctrl + I)"></button>
+
+              <button class="ql-underline" title="Underline (Ctrl+U)"></button>
+
+              <button class="ql-strike" title="strike"></button>
+
+              <button class="ql-clean" title="Clear Formatting"></button>
+            </span>
+
+            <span>|</span>
+
+            <!-- Nhóm màu sắc -->
+            <span>
+              <select class="ql-color"></select>
+              <select class="ql-background"></select>
+            </span>
+
+            <!-- Nhóm header / blockquote -->
+            <span>
+              <button class="ql-blockquote" title="Blockquote"></button>
+            </span>
+
+            <!-- Nhóm danh sách -->
+            <span>
+              <button
+                class="ql-list"
+                value="ordered"
+                title="Ordered List"
+              ></button>
+              <button
+                class="ql-list"
+                value="bullet"
+                title="Bullet List"
+              ></button>
+              <button
+                class="ql-indent"
+                value="-1"
+                title="Decrease Indent"
+              ></button>
+              <button
+                class="ql-indent"
+                value="+1"
+                title="Increase Indent"
+              ></button>
+            </span>
+
+            <!-- Nhóm alignment -->
+            <span>
+              <select class="ql-align">
+                <option selected></option>
+                <option value="center"></option>
+                <option value="right"></option>
+                <option value="justify"></option>
+              </select>
+            </span>
+
+            <span>|</span>
+
+            <!-- Liên kết / hình ảnh -->
+            <span>
+              <button class="ql-link" title="Link"></button>
+              <button class="ql-image" title="Image"></button>
+            </span>
+          </div>
+
+          <!--#endregion-->
+
+          <!--Khung soạn thảo-->
+          <div id="note_Content"></div>
+
+          <!--Hint-->
+          <div id="hint">
+            💡 Mẹo: Nhấn Ctrl+S để lưu nhanh - Tự động lưu sau 3 giây không gõ
+          </div>
+        </div>
+
+        <!--Lưu/Xóa-->
+        <div class="btn_group">
+          <button class="btn" id="btn_save">💾Lưu</button>
+          <button class="btn" id="btn_delete">🗑️ Xóa</button>
+        </div>
+      </div>
+
+      <!--#region Chỉ số extension-->
+      <div id="page_stat">
+        <h3>📚 Ghi chú trên trang này (<span id="noteCount">0</span>)</h3>
+        <div id="notesList"></div>
+      </div>
+
+      <div id="stats">
+        <div class="stats_item">
+          <div class="stat_number" id="total_notes">0</div>
+          <div class="stat_label">Tổng ghi chú</div>
+        </div>
+
+        <div class="stats_item">
+          <div class="stat_number" id="total_pages">0</div>
+          <div class="stat_label">Trang đã lưu</div>
+        </div>
+      </div>
+
+      <!--#endregion-->
+    </div>
+
+    <script src="quill/quill.min.js"></script>
+
+    <script src="Setting.js"></script>
+    <script src="MainPage.js"></script>
+  </body>
+</html>
