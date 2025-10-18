@@ -1,12 +1,73 @@
 //Lấy URL hiện tại
 let currentURL = "";
 let editingNoteId = null;
+let quill = null;
 
 //Khởi tạo khi popup mở
 document.addEventListener("DOMContentLoaded", async () => {
+  // Khởi tạo Quill editor
+  initQuillEditor();
+
   await get_CurrentTab();
-  loadNotes();
+  await loadNotes();
 });
+
+//#region Khởi tạo Quill Editor
+function initQuillEditor() {
+  const editorElement = document.getElementById("note_Content");
+  if (editorElement && !quill) {
+    quill = new Quill("#note_Content", {
+      theme: "snow",
+      modules: {
+        toolbar: ".editor_toolbar",
+      },
+      placeholder: "Nhập văn bản ở đây...",
+    });
+  }
+  return quill;
+}
+//#endregion
+
+//#region Lắng nghe khi đổi tab
+
+// Khi user chuyển sang tab khác
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  await get_CurrentTab();
+  await loadNotes();
+
+  // Reset form nếu đang edit
+  if (editingNoteId) {
+    document.getElementById("note_Title").value = "";
+    if (quill) {
+      quill.setText("");
+    }
+    editingNoteId = null;
+    document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+  }
+});
+
+// Khi URL trong tab hiện tại thay đổi (user navigate)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url) {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (tabs[0] && tabs[0].id === tabId) {
+        await get_CurrentTab();
+        await loadNotes();
+
+        // Reset form nếu đang edit
+        if (editingNoteId) {
+          document.getElementById("note_Title").value = "";
+          if (quill) {
+            quill.setText("");
+          }
+          editingNoteId = null;
+          document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+        }
+      }
+    });
+  }
+});
+//#endregion
 
 //#region Lấy URL
 async function get_CurrentTab() {
@@ -14,16 +75,6 @@ async function get_CurrentTab() {
   currentURL = new URL(tab.url).hostname;
   document.getElementById("current_url").textContent = currentURL;
 }
-//#endregion
-
-//#region Khung soạn thảo
-const quill = new Quill("#note_Content", {
-  theme: "snow",
-  modules: {
-    toolbar: ".editor_toolbar",
-  },
-  placeholder: "Nhập văn bản ở đây...",
-});
 //#endregion
 
 //#region Load danh sách ghi chú
@@ -36,6 +87,9 @@ async function loadNotes() {
 
   const notesList = document.getElementById("notesList");
   document.getElementById("noteCount").textContent = currentNotes.length;
+
+  // Cập nhật stats mỗi khi load notes
+  await updateStats();
 
   if (currentNotes.length === 0) {
     notesList.innerHTML = `
@@ -180,11 +234,15 @@ function showNotification(message) {
 //#region Lưu ghi chú
 
 document.getElementById("btn_save").addEventListener("click", async () => {
-  const title = document.getElementById("note_Title").value.trim();
-  const editor = document.getElementById("note_Content");
-  const content = editor.innerHTML.trim();
+  if (!quill) {
+    console.error("Quill editor chưa được khởi tạo");
+    return;
+  }
 
-  if (!title || !content === "") {
+  const title = document.getElementById("note_Title").value.trim();
+  const content = quill.root.innerHTML.trim();
+
+  if (!title || content === "<p><br></p>" || content === "") {
     alert("⚠️ Vui lòng nhập đầy đủ tiêu đề và nội dung!");
     return;
   }
@@ -208,7 +266,7 @@ document.getElementById("btn_save").addEventListener("click", async () => {
   }
 
   if (editingNoteId) {
-    //Câp nhật ghi chú
+    //Cập nhật ghi chú
     const index = notes[currentURL].findIndex((n) => n.id === editingNoteId);
     if (index !== -1) {
       notes[currentURL][index] = note;
@@ -224,7 +282,7 @@ document.getElementById("btn_save").addEventListener("click", async () => {
 
   //Reset form
   document.getElementById("note_Title").value = "";
-  editor.innerHTML = "";
+  quill.setText("");
   document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
 
   //Reload danh sách
@@ -241,6 +299,11 @@ document.getElementById("btn_save").addEventListener("click", async () => {
 
 //#region Sửa ghi chú
 async function editNote(id) {
+  if (!quill) {
+    console.error("Quill editor chưa được khởi tạo");
+    return;
+  }
+
   const result = await chrome.storage.local.get(["notes"]);
   const notes = result.notes || {};
   const currentNotes = notes[currentURL] || [];
@@ -249,7 +312,9 @@ async function editNote(id) {
 
   if (note) {
     document.getElementById("note_Title").value = note.title;
-    document.getElementById("note_Content").innerHTML = note.content;
+    // Sử dụng clipboard để set HTML content vào Quill
+    const delta = quill.clipboard.convert(note.content);
+    quill.setContents(delta);
     editingNoteId = id;
     document.getElementById("btn_save").textContent = "💾 Cập nhật ghi chú";
 

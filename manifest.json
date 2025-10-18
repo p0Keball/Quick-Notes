@@ -3,8 +3,14 @@
   "name": "Web Note",
   "version": "1.0.0",
   "description": "Ghi chú thông minh cho mọi trang web",
-  "permissions": ["storage", "activeTab", "tabs"],
+  "permissions": ["storage", "activeTab", "tabs", "sidePanel"],
   "action": {
-    "default_popup": "MainPage.html"
+    "default_title": "Open Web Note"
+  },
+  "side_panel": {
+    "default_path": "MainPage.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }
