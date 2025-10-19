@@ -1,0 +1,110 @@
+/*#region Theme Color Picker*/
+
+#settings-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, background 0.3s;
+}
+
+#settings-btn:hover {
+  transform: rotate(45deg);
+  background: #f1f1f1;
+}
+
+/* 🎨 Menu đổi màu nền */
+#color-menu {
+  display: none;
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  background: rgba(230, 225, 255, 0.9);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 180px;
+  animation: fadeIn 0.25s ease;
+}
+
+#color-menu.active {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.color-option {
+  flex: 1 1 45%;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.color-option:hover {
+  background: #e8e8e8;
+  transform: translateY(-2px);
+}
+
+#settings-btn {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 20px;
+  margin-right: 5px;
+  transition: transform 0.3s ease;
+}
+
+#settings-btn:hover {
+  transform: rotate(45deg) scale(1.2);
+}
+
+/* Hiệu ứng mở menu */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* chữ */
+.color-option {
+  flex: 1 1 45%;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+
+  color: #333;
+}
+/*#endregion*/

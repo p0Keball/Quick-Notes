@@ -1,18 +1,14 @@
-//Lấy URL hiện tại
 let currentURL = "";
 let editingNoteId = null;
 let quill = null;
 
-//Khởi tạo khi popup mở
 document.addEventListener("DOMContentLoaded", async () => {
-  // Khởi tạo Quill editor
   initQuillEditor();
-
   await get_CurrentTab();
   await loadNotes();
 });
 
-//#region Khởi tạo Quill Editor
+//#region Init quill
 function initQuillEditor() {
   const editorElement = document.getElementById("note_Content");
   if (editorElement && !quill) {
@@ -21,14 +17,14 @@ function initQuillEditor() {
       modules: {
         toolbar: ".editor_toolbar",
       },
-      placeholder: "Nhập văn bản ở đây...",
+      placeholder: "Enter text here ...",
     });
   }
   return quill;
 }
 //#endregion
 
-//#region Lắng nghe khi đổi tab
+//#region Tab change
 
 // Khi user chuyển sang tab khác
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
@@ -37,12 +33,7 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
 
   // Reset form nếu đang edit
   if (editingNoteId) {
-    document.getElementById("note_Title").value = "";
-    if (quill) {
-      quill.setText("");
-    }
-    editingNoteId = null;
-    document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+    document.getElementById("btn_cancel").click();
   }
 });
 
@@ -69,7 +60,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 //#endregion
 
-//#region Lấy URL
+//#region Get URL
 async function get_CurrentTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   currentURL = new URL(tab.url).hostname;
@@ -77,9 +68,10 @@ async function get_CurrentTab() {
 }
 //#endregion
 
-//#region Load danh sách ghi chú
+//#region Load note list
 
-//#region Load ghi chú đã lưu trong chrom storage
+//#region Load ghi chú đã lưu trong chrome storage
+
 async function loadNotes() {
   const result = await chrome.storage.local.get(["notes"]);
   const notes = result.notes || {};
@@ -93,14 +85,10 @@ async function loadNotes() {
 
   if (currentNotes.length === 0) {
     notesList.innerHTML = `
-            <div class="empty-state">
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                </svg>
-                <p>Chưa có ghi chú nào</p>
-            </div>
-        `;
+      <div class="empty-state">
+        <p>Chưa có ghi chú nào</p>
+      </div>
+    `;
     return;
   }
 
@@ -114,7 +102,7 @@ async function loadNotes() {
       const tempDiv = document.createElement("div");
       tempDiv.innerHTML = note.content;
 
-      // Xóa tất cả các thẻ nguy hiểm (input, form, script, etc.)
+      // Xóa tất cả các thẻ nguy hiểm
       const dangerousTags = [
         "input",
         "textarea",
@@ -130,27 +118,50 @@ async function loadNotes() {
         elements.forEach((el) => el.remove());
       });
 
+      // Lấy text thuần và cắt ngắn nếu quá dài
+      const textContent = tempDiv.textContent || tempDiv.innerText;
+      const maxLength = 150; // Số ký tự tối đa hiển thị
+      const isTruncated = textContent.length > maxLength;
+      const displayContent = isTruncated
+        ? textContent.substring(0, maxLength) + "..."
+        : tempDiv.innerHTML;
+
       return `
         <div class="note-item">
-            <div class="note-title">${escapeHtml(note.title)}</div>
-            <div class="note-content">${tempDiv.innerHTML}</div>
-            <div class="note-meta">
-                <span>${formatDate(note.last_Modified)}</span>
-                <div class="note-actions">
-                    <button class="btn-small btn-edit" data-id="${
-                      note.id
-                    }">✏️ Sửa</button>
-                    <button class="btn-small btn-delete" data-id="${
-                      note.id
-                    }">🗑️ Xóa</button>
-                </div>
+          <div class="note-title">${escapeHtml(note.title)}</div>
+          <div class="note-content ${
+            isTruncated ? "truncated" : ""
+          }" data-full-content="${escapeHtml(tempDiv.innerHTML)}">
+            ${
+              isTruncated
+                ? escapeHtml(textContent.substring(0, maxLength)) + "..."
+                : tempDiv.innerHTML
+            }
+          </div>
+          ${
+            isTruncated
+              ? '<button class="btn-expand" data-id="' +
+                note.id +
+                '">More</button>'
+              : ""
+          }
+          <div class="note-meta">
+            <span>${formatDate(note.last_Modified)}</span>
+            <div class="note-actions">
+              <button class="btn-small btn-edit" data-id="${
+                note.id
+              }">✏️ Edit</button>
+              <button class="btn-small btn-delete" data-id="${
+                note.id
+              }">🗑️ Delete</button>
             </div>
+          </div>
         </div>
-    `;
+      `;
     })
     .join("");
 
-  //Gắn sự kiện cho các nút
+  // Gắn sự kiện cho các nút
   document.querySelectorAll(".btn-edit").forEach((btn) => {
     btn.addEventListener("click", (e) => editNote(e.target.dataset.id));
   });
@@ -158,11 +169,31 @@ async function loadNotes() {
   document.querySelectorAll(".btn-delete").forEach((btn) => {
     btn.addEventListener("click", (e) => deleteNote(e.target.dataset.id));
   });
+
+  // Gắn sự kiện cho nút "Xem thêm"
+  document.querySelectorAll(".btn-expand").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const noteContent = e.target.previousElementSibling;
+      const fullContent = noteContent.dataset.fullContent;
+
+      if (noteContent.classList.contains("truncated")) {
+        noteContent.innerHTML = fullContent;
+        noteContent.classList.remove("truncated");
+        e.target.textContent = "Less";
+      } else {
+        const textContent = noteContent.textContent;
+        noteContent.innerHTML =
+          escapeHtml(textContent.substring(0, 150)) + "...";
+        noteContent.classList.add("truncated");
+        e.target.textContent = "More";
+      }
+    });
+  });
 }
 
 //#endregion
 
-//#region Format ngày tháng
+//#region Format Date
 function formatDate(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -196,11 +227,11 @@ function formatDate(dateString) {
 
 //#endregion
 
-//#endregion
+//#endregion//
 
-//#region Thao tác với note
+//#region Work with note
 
-//#region Hiển thị thông báo
+//#region Show notification
 
 function showNotification(message) {
   // Tạo element thông báo
@@ -231,7 +262,7 @@ function showNotification(message) {
 
 //#endregion
 
-//#region Lưu ghi chú
+//#region Save
 
 document.getElementById("btn_save").addEventListener("click", async () => {
   if (!quill) {
@@ -243,7 +274,7 @@ document.getElementById("btn_save").addEventListener("click", async () => {
   const content = quill.root.innerHTML.trim();
 
   if (!title || content === "<p><br></p>" || content === "") {
-    alert("⚠️ Vui lòng nhập đầy đủ tiêu đề và nội dung!");
+    alert("⚠️ Missing title or note content!");
     return;
   }
 
@@ -281,23 +312,32 @@ document.getElementById("btn_save").addEventListener("click", async () => {
   await chrome.storage.local.set({ notes });
 
   //Reset form
-  document.getElementById("note_Title").value = "";
-  quill.setText("");
-  document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+  document.getElementById("btn_cancel").click();
 
   //Reload danh sách
   await loadNotes();
   updateStats();
 
   //Hiển thị thông báo
-  showNotification("✅ Đã lưu ghi chú thành công!");
+  showNotification("✅ Saved!");
 });
 
 //#endregion
 
-//#region note list
+//#region Cancel
 
-//#region Sửa ghi chú
+document.getElementById("btn_cancel").addEventListener("click", async () => {
+  document.getElementById("note_Title").value = "";
+  if (quill) quill.setText("");
+  document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+});
+
+//#endregion
+
+//#region Note list
+
+//#region Edit note
+
 async function editNote(id) {
   if (!quill) {
     console.error("Quill editor chưa được khởi tạo");
@@ -326,6 +366,7 @@ async function editNote(id) {
 //#endregion
 
 //#region Xóa ghi chú
+
 async function deleteNote(id) {
   if (!confirm("❌ Bạn có chắc muốn xóa ghi chú này?")) {
     return;
@@ -354,7 +395,7 @@ async function deleteNote(id) {
 
 //#endregion
 
-//#region Cập nhật extension stats
+//#region Update extension stats
 
 async function updateStats() {
   const result = await chrome.storage.local.get(["notes"]);
@@ -372,10 +413,33 @@ async function updateStats() {
 }
 
 // Escape HTML để tránh XSS
+
 function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
 }
+
+//#endregion
+
+//#region Shortcut
+
+document.addEventListener("keydown", async (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault(); // Ngăn browser save page
+    document.getElementById("btn_save").click();
+  }
+
+  // Ctrl+Enter để lưu (alternative)
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    e.preventDefault();
+    document.getElementById("btn_save").click();
+  }
+
+  // Escape để hủy/clear
+  if (e.key === "Escape") {
+    document.getElementById("btn_cancel").click();
+  }
+});
 
 //#endregion

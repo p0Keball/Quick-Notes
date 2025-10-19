@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="MainPage.css" />
     <link href="quill/quill.snow.css" rel="stylesheet" />
+    <link href="setting.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -16,19 +17,20 @@
           <h1>📝 QuickNotes</h1>
         </div>
 
-        <!-- ⚙️ Nút bánh răng + menu đổi màu -->
+        <!-- #region ⚙️ Setting -->
         <div class="header-right">
-          <button id="settings-btn" title="Đổi màu nền">⚙️</button>
-          <!-- Menu đổi màu nền (đã thêm icon + nhiều màu hơn) -->
+          <button id="settings-btn" title="Setting">⚙️</button>
+
+          <!-- #region Color picker  -->
           <div id="color-menu">
             <div
               class="color-option"
               data-color="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
             >
-              🌞 <span>Mặc định</span>
+              🌞 <span>Default</span>
             </div>
             <div class="color-option" data-color="#d9c3ff">
-              💜 <span>Tím</span>
+              🌸 <span>Sakura</span>
             </div>
             <div
               class="color-option"
@@ -55,19 +57,19 @@
               🐝 <span>Honey bee</span>
             </div>
             <div class="color-option" data-color="#ff7f7f">
-              ❤️ <span>Đỏ nhạt</span>
+              ❤️ <span>Heart</span>
             </div>
             <div
               class="color-option"
               data-color="linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)"
             >
-              🧡 <span>Cam</span>
+              🌅 <span>Sunset</span>
             </div>
             <div
               class="color-option"
               data-color="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"
             >
-              💧 <span>Xanh nhạt</span>
+              💧 <span>Fresh</span>
             </div>
             <div
               class="color-option"
@@ -79,35 +81,39 @@
               class="color-option"
               data-color="linear-gradient(135deg, #f9d423 0%, #a1c4fd 50%, #c2e9fb 100%)"
             >
-              🌫️ <span>Bạc</span>
+              🌫️ <span>Mix</span>
             </div>
           </div>
+
+          <!--#endregion-->
+
+          <!--#endregion-->
         </div>
       </div>
 
       <!--#region URL-->
 
       <div id="current_page">
-        <label>🌐 Trang web hiện tại:</label>
-        <div id="current_url">Đang tải...</div>
+        <label>🌐 Current web:</label>
+        <div id="current_url">Loading...</div>
       </div>
 
       <!--#endregion-->
 
       <div id="note_informations">
-        <!--#region Tiêu đề-->
+        <!--#region Title-->
 
         <div class="input_group">
-          <label>📌 Tiêu đề ghi chú:</label>
-          <input type="text" id="note_Title" placeholder="Nhập tiêu đề" />
+          <label>📌 Title:</label>
+          <input type="text" id="note_Title" placeholder="Enter title here" />
         </div>
 
         <!--#endregion-->
 
         <div class="input_group">
-          <label>✍️ Nội dung:</label>
+          <label>✍️ Content:</label>
 
-          <!--#region Công cụ soạn thảo-->
+          <!--#region Toolbar-->
 
           <div class="editor_toolbar">
             <span>
@@ -190,37 +196,40 @@
 
           <!--#endregion-->
 
-          <!--Khung soạn thảo-->
+          <!--note editor-->
           <div id="note_Content"></div>
 
           <!--Hint-->
-          <div id="hint">
-            💡 Mẹo: Nhấn Ctrl+S để lưu nhanh - Tự động lưu sau 3 giây không gõ
-          </div>
+          <div id="hint">💡 Hint: Press Ctrl+S for quick save</div>
         </div>
 
-        <!--Lưu/Xóa-->
+        <!--button-->
         <div class="btn_group">
-          <button class="btn" id="btn_save">💾Lưu</button>
-          <button class="btn" id="btn_delete">🗑️ Xóa</button>
+          <button class="btn" id="btn_save">💾Save</button>
+          <button class="btn" id="btn_cancel">🞮 Cancel</button>
         </div>
       </div>
 
-      <!--#region Chỉ số extension-->
+      <!--#region extension stat-->
+
+      <!--on this page-->
+
       <div id="page_stat">
-        <h3>📚 Ghi chú trên trang này (<span id="noteCount">0</span>)</h3>
+        <h3>📚 Total notes on this page (<span id="noteCount">0</span>)</h3>
         <div id="notesList"></div>
       </div>
+
+      <!--total-->
 
       <div id="stats">
         <div class="stats_item">
           <div class="stat_number" id="total_notes">0</div>
-          <div class="stat_label">Tổng ghi chú</div>
+          <div class="stat_label">Total notes</div>
         </div>
 
         <div class="stats_item">
           <div class="stat_number" id="total_pages">0</div>
-          <div class="stat_label">Trang đã lưu</div>
+          <div class="stat_label">Total pages</div>
         </div>
       </div>
 

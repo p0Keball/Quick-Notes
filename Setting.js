@@ -1,4 +1,4 @@
-//#region Đổi màu
+//#region Change color
 
 // Lấy các elements
 const settingsBtn = document.getElementById("settings-btn");
