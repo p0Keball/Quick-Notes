@@ -104,12 +104,7 @@ colorOptions.forEach((option) => {
 // Kiểm tra có phải nút Lưu/Xóa không
 function shouldSkipButton(btn) {
   const btnText = btn.textContent.trim().toLowerCase();
-  return (
-    btnText.includes("lưu") ||
-    btnText.includes("xóa") ||
-    btnText.includes("save") ||
-    btnText.includes("delete")
-  );
+  return btnText.includes("save") || btnText.includes("cancel");
 }
 
 // Thêm opacity vào màu HEX

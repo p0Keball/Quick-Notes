@@ -1,14 +1,48 @@
-let currentURL = "";
 let editingNoteId = null;
-let quill = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   initQuillEditor();
   await get_CurrentTab();
   await loadNotes();
+  updateButtons();
 });
 
+//#region scroll button
+
+const btnUp = document.getElementById("scrollUp");
+const btnDown = document.getElementById("scrollDown");
+
+function updateButtons() {
+  const scrollY = window.scrollY;
+  const windowH = window.innerHeight;
+  const docH = document.documentElement.scrollHeight;
+
+  // show UP if not at top
+  if (scrollY > 100) btnUp.classList.add("visible");
+  else btnUp.classList.remove("visible");
+
+  // show DOWN if not at bottom
+  if (scrollY + windowH < docH - 100) btnDown.classList.add("visible");
+  else btnDown.classList.remove("visible");
+}
+
+btnUp.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+btnDown.addEventListener("click", () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+});
+
+window.addEventListener("scroll", updateButtons);
+window.addEventListener("resize", updateButtons);
+
+//#endregion
+
 //#region Init quill
+
+let quill = null;
+
 function initQuillEditor() {
   const editorElement = document.getElementById("note_Content");
   if (editorElement && !quill) {
@@ -61,11 +95,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 //#endregion
 
 //#region Get URL
+
+let currentURL = "";
+
 async function get_CurrentTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   currentURL = new URL(tab.url).hostname;
   document.getElementById("current_url").textContent = currentURL;
 }
+
 //#endregion
 
 //#region Load note list
@@ -266,7 +304,7 @@ function showNotification(message) {
 
 document.getElementById("btn_save").addEventListener("click", async () => {
   if (!quill) {
-    console.error("Quill editor chưa được khởi tạo");
+    console.error("Quill editor not init");
     return;
   }
 
@@ -329,7 +367,7 @@ document.getElementById("btn_save").addEventListener("click", async () => {
 document.getElementById("btn_cancel").addEventListener("click", async () => {
   document.getElementById("note_Title").value = "";
   if (quill) quill.setText("");
-  document.getElementById("btn_save").textContent = "💾 Lưu ghi chú";
+  document.getElementById("btn_save").textContent = "💾 Save";
 });
 
 //#endregion
@@ -356,7 +394,7 @@ async function editNote(id) {
     const delta = quill.clipboard.convert(note.content);
     quill.setContents(delta);
     editingNoteId = id;
-    document.getElementById("btn_save").textContent = "💾 Cập nhật ghi chú";
+    document.getElementById("btn_save").textContent = "💾 Update";
 
     //scroll lên trên
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -368,7 +406,7 @@ async function editNote(id) {
 //#region Xóa ghi chú
 
 async function deleteNote(id) {
-  if (!confirm("❌ Bạn có chắc muốn xóa ghi chú này?")) {
+  if (!confirm("❌ Are you sure to delete this note ?")) {
     return;
   }
 
@@ -386,7 +424,7 @@ async function deleteNote(id) {
   await loadNotes();
   updateStats();
 
-  showNotification("🗑️ Đã xóa ghi chú!");
+  showNotification("🗑️ Deleted !");
 }
 
 //#endregion
